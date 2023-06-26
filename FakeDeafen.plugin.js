@@ -100,6 +100,7 @@ module.exports = class fakeDeafen
 
         const triggerKeySettingButton = document.createElement("button");
 		triggerKeySettingButton.textContent = "Change Key";
+		// This causese the settings to be inaccesible, but adding 'this.' before updateTriggerKey causes the button to not call the function.
 		triggerKeySettingButton.addEventListener("click", updateTriggerKey);
 
         triggerKeySetting.appendChild(triggerKeySettingLabel);
