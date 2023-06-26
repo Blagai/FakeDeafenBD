@@ -1,26 +1,58 @@
-//META{"name":"FakeDeafen", "authorId":"317948923102756865", "website":"https://github.com/ChloeTheBitch/FakeDeafenBD"}*//
-//import {DiscordModules as Modules} from "modules";
+/**
+* @name FakeDeafen
+* @author ChloeTheBitch
+* @description Lets you appear deafened while still being able to hear and talk
+* @version 0.0.4
+* @source https://github.com/ChloeTheBitch/FakeDeafenBD
+* @donate https://paypal.me/ArielChloeMann
+*/
 
-// todo make it possible to change trigger shortcut in plugin settings
-// todo have a ui button to trigger it
-// todo make it possible to turn off without restarting
+// todo make the settings thingy work (thingy being panel and the settings inside lmao)
+// todo make a ui button to trigger it as well as keyboard shortcut
+// todo make it possible to turn off without restarting Discord
 
-
-class FakeDeafen
- {
-    
-    getName() {return "Fake Deafen";}
-    getDescription() {return "Allows you to speak and listen while being deafened";}
-    getVersion() {return "0.0.1";}
-    getAuthor() {return "ChloeTheBitch";}
-	getWebsite() {return "https://github.com/ChloeTheBitch/FakeDeafenBD";}
-    
-
-
-
-    start() 
+module.exports = class fakeDeafen
+{
+	constructor(meta)
 	{
-        if (!global.ZeresPluginLibrary)
+		// Set up the settings
+		const mySettings = {triggerKey: "d"};
+		
+		// The actual code that does everything
+		function trigger()
+		{
+			var glob = new TextDecoder("utf-8");
+			WebSocket.prototype.original = WebSocket.prototype.send;
+			WebSocket.prototype.send = function(data)
+			{
+				if (Object.prototype.toString.call(data) === "[object ArrayBuffer]") 
+				{
+					if (glob.decode(data).includes("self_deaf"))
+					{
+						data = data.replace('"self_mute":false');
+					}
+				}
+				WebSocket.prototype.original.apply(this, [data]);
+			}
+			window.BdApi.alert("success",`If you want to stop the plugin, restart Discord (CTRL+R)`);
+		}
+		
+		// Function to update the trigger key. Don't think it works but I can't even check because the settings panel won't open lmao
+		function updateTriggerKey()
+		{
+			const newKey = prompt("Enter a new key to trigger the plugin:");
+			if (newKey)
+			{
+				triggerKey = newKey.toLowerCase();
+				BdApi.Data.save("FakeDeafen", "settings", mySettings);
+			}
+		}
+	}
+	
+	start()
+	{
+		// Check if required library downloaded and download if not
+		if (!global.ZeresPluginLibrary)
 		{
 			BdApi.UI.showConfirmationModal("Library Missing", `The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`,
 			{
@@ -36,29 +68,45 @@ class FakeDeafen
 				}
 			});
 		}
-        
-		document.addEventListener("keydown", function(event) 
+		
+		// Trigger the plugin when ctrl + triggerKey are pressed
+		document.addEventListener("keydown", function(event)
 		{
-			if (event.ctrlKey && event.key === "d")
+			if (event.ctrlKey && event.key === triggerKey)
 			{
-				var glob = new TextDecoder("utf-8");
-				WebSocket.prototype.original = WebSocket.prototype.send;
-				WebSocket.prototype.send = function(data)
-				{
-					if (Object.prototype.toString.call(data) === "[object ArrayBuffer]") 
-					{
-						if (glob.decode(data).includes("self_deaf"))
-						{
-							data = data.replace('"self_mute":false');
-						}
-					}
-					WebSocket.prototype.original.apply(this, [data]);
-				}
-				window.BdApi.alert("success",`If you want to stop the plugin, restart Discord (CTRL+R)`);
+				trigger();
 			}
+		
 		});
-    }
-    stop()
+	}
+	
+	stop()
 	{
-    }
+		
+	}
+	
+	// Create the settings panel
+	// Does not work at all lol
+	getSettingsPanel()
+	{
+		const mySettingsPanel = document.createElement("div");
+        mySettingsPanel.id = "my-settings";
+
+        const triggerKeySetting = document.createElement("div");
+        triggerKeySetting.classList.add("setting");
+
+        const triggerKeySettingLabel = document.createElement("span")
+        triggerKeySettingLabel.textContent = "Trigger keyboard shortcut";
+
+        const triggerKeySettingButton = document.createElement("button");
+		triggerKeySettingButton.textContent = "Change Key";
+		triggerKeySettingButton.addEventListener("click", updateTriggerKey);
+
+        triggerKeySetting.appendChild(triggerKeySettingLabel);
+		triggerKeySetting.appendChild(triggerKeySettingButton);
+
+        mySettingsPanel.append(triggerKeySetting);
+		
+        return mySettingsPanel;
+	}
 }
