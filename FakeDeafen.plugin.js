@@ -40,12 +40,7 @@ module.exports = class fakeDeafen
 		// Function to update the trigger key. Don't think it works but I can't even check because the settings panel won't open lmao
 		function updateTriggerKey()
 		{
-			const newKey = prompt("Enter a new key to trigger the plugin:");
-			if (newKey)
-			{
-				triggerKey = newKey.toLowerCase();
-				BdApi.Data.save("FakeDeafen", "settings", mySettings);
-			}
+			window.BdApi.alert ("Func called");
 		}
 	}
 	
@@ -100,8 +95,8 @@ module.exports = class fakeDeafen
 
         const triggerKeySettingButton = document.createElement("button");
 		triggerKeySettingButton.textContent = "Change Key";
-		// This causese the settings to be inaccesible, but adding 'this.' before updateTriggerKey causes the button to not call the function.
-		triggerKeySettingButton.addEventListener("click", updateTriggerKey);
+		// Why tf is this not working?! JavaScript is fucking trash istg
+		triggerKeySettingButton.addEventListener("click", this.updateTriggerKey);
 
         triggerKeySetting.appendChild(triggerKeySettingLabel);
 		triggerKeySetting.appendChild(triggerKeySettingButton);
