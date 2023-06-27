@@ -7,8 +7,8 @@
  * @donate https://paypal.me/ArielChloeMann
  */
 
-// todo make the setting button do something
-// todo make a ui button to trigger it as well as keyboard shortcut
+// todo add a switch setting between ctrl+key and shift+key
+// todo make a ui button to trigger it
 // todo make it possible to turn off without restarting Discord
 
 module.exports = class FakeDeafen {
@@ -40,15 +40,35 @@ module.exports = class FakeDeafen {
         window.BdApi.alert("success", "If you want to stop the plugin, restart Discord (CTRL+R)");
     }
 
-	// Func that gets called when button in settings is pressed
-	// Doesn't do anyhthing important rn
-    updateTriggerKey() 
+	// Changes the trigger key to whatever the user presses and notifies the user
+	updateTriggerKey() 
 	{
-        window.BdApi.alert("Func called");
-    }
+		window.BdApi.alert("Press new key", `Press the new key you want to use to trigger the Fake Deafen`);
+		return new Promise((resolve) => {
+			const handleKeyDown = (event) => {
+				const newKey = event.key;
+				if (newKey !== this.mySettings.triggerKey) 
+				{
+					this.mySettings.triggerKey = newKey;
+					window.removeEventListener("keydown", handleKeyDown);
+					window.BdApi.alert("success", `Changed key to ${newKey}`);
+					BdApi.Data.save(this.meta.name, "settings", this.mySettings);
+				}
+				else
+				{
+					window.BdApi.alert("Same key", `You new keybind is the same as the old one`);
+				}
+				resolve();
+			};
+			window.addEventListener("keydown", handleKeyDown);
+		});
+	}
 
     start() 
 	{
+		// Load settings
+		Object.assign(this.mySettings, BdApi.Data.load(this.meta.name, "settings"));
+		
 		// Check if required library is downloaded and prompt the user to download it if it isn't
         if (!global.ZeresPluginLibrary) 
 		{
