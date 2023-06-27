@@ -7,6 +7,7 @@
  * @donate https://paypal.me/ArielChloeMann
  */
 
+// todo make setting change confirmation be a toast
 // todo add a switch setting between ctrl+key and shift+key
 // todo make a ui button to trigger it
 // todo make it possible to turn off without restarting Discord
