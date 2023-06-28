@@ -44,27 +44,42 @@ module.exports = class FakeDeafen {
 	// Changes the trigger key to whatever the user presses and notifies the user
 	updateTriggerKey() 
 	{
-		BdApi.showToast("Press the key you want to bind", {type: "info"});
-		return new Promise((resolve) => {
-			const handleKeyDown = (event) => {
-				const newKey = event.key;
-				if (newKey !== this.mySettings.triggerKey) 
+		BdApi.showToast("Press the key you want to bind", { type: "info" });
+		return new Promise((resolve) => 
+		{
+			const handleKeyDown = (event) => 
+			{
+				const newKey = event.key.toLowerCase();
+				const ctrlKey = "control";
+				const shiftKey = "shift";
+				const altKey = "alt";
+				const winKey = "meta";
+				const tabKey = "tab";
+				const capsLockKey = "capslock";
+
+				if (newKey !== this.mySettings.triggerKey && newKey !== ctrlKey && newKey !== shiftKey && newKey !== altKey && newKey !== winKey && newKey !== tabKey && newKey !== capsLockKey) 
 				{
 					this.mySettings.triggerKey = newKey;
 					window.removeEventListener("keydown", handleKeyDown);
-					BdApi.showToast("Changed key to ${newKey}", {type: "success"});
+					BdApi.showToast(`Changed key to ${newKey}`, { type: "success" });
 					BdApi.Data.save(this.meta.name, "settings", this.mySettings);
 				}
-				else
+				else if (newKey === this.mySettings.triggerKey)
 				{
 					window.removeEventListener("keydown", handleKeyDown);
-					BdApi.showToast("This is the same as the old key!", {type: "error"});
+					BdApi.showToast("This is the same as the old key!", { type: "error" });
+				} 
+				else if (newKey === ctrlKey || newKey === shiftKey || newKey === altKey || newKey === winKey || newKey === tabKey || newKey === capsLockKey) 
+				{
+					BdApi.showToast("You can't bind certain keys to the trigger!", { type: "warning" });
 				}
 				resolve();
 			};
 			window.addEventListener("keydown", handleKeyDown);
 		});
 	}
+
+
 
     start() 
 	{
@@ -103,7 +118,7 @@ module.exports = class FakeDeafen {
 		// What's used to trigger the main code
         document.addEventListener("keydown", (event) => 
 		{
-            if (event.ctrlKey && event.key === this.mySettings.triggerKey) 
+            if (event.ctrlKey && event.key === this.mySettings.triggerKey || event.ctrlKey && event.key === this.mySettings.triggerKey.toUpperCase()) 
 			{
                 this.trigger();
             }
