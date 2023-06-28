@@ -6,8 +6,8 @@
  * @source https://github.com/ChloeTheBitch/FakeDeafenBD
  * @donate https://paypal.me/ArielChloeMann
  */
-
-// todo make setting change confirmation be a toast
+ 
+// todo make it impossible for user to pick alt, shift, capslock, etc as the trigger key
 // todo add a switch setting between ctrl+key and shift+key
 // todo make a ui button to trigger it
 // todo make it possible to turn off without restarting Discord
@@ -44,7 +44,7 @@ module.exports = class FakeDeafen {
 	// Changes the trigger key to whatever the user presses and notifies the user
 	updateTriggerKey() 
 	{
-		window.BdApi.alert("Press new key", `Press the new key you want to use to trigger the Fake Deafen`);
+		BdApi.showToast("Press the key you want to bind", {type: "info"});
 		return new Promise((resolve) => {
 			const handleKeyDown = (event) => {
 				const newKey = event.key;
@@ -52,12 +52,13 @@ module.exports = class FakeDeafen {
 				{
 					this.mySettings.triggerKey = newKey;
 					window.removeEventListener("keydown", handleKeyDown);
-					window.BdApi.alert("success", `Changed key to ${newKey}`);
+					BdApi.showToast("Changed key to ${newKey}", {type: "success"});
 					BdApi.Data.save(this.meta.name, "settings", this.mySettings);
 				}
 				else
 				{
-					window.BdApi.alert("Same key", `You new keybind is the same as the old one`);
+					window.removeEventListener("keydown", handleKeyDown);
+					BdApi.showToast("This is the same as the old key!", {type: "error"});
 				}
 				resolve();
 			};
