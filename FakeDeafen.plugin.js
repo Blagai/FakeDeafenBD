@@ -2,7 +2,7 @@
  * @name FakeDeafen
  * @author ChloeTheBitch
  * @description Lets you appear deafened while still being able to hear and talk
- * @version 0.1.0
+ * @version 0.1.2
  * @source https://github.com/ChloeTheBitch/FakeDeafenBD
  * @donate https://paypal.me/ArielChloeMann
  */
