@@ -77,6 +77,18 @@ module.exports = class FakeDeafen {
 			window.addEventListener("keydown", handleKeyDown);
 		});
 	}
+	
+	switchShiftKey()
+	{
+		if (this.mySettings.shiftKeyRequired)
+		{
+			this.mySettings.shiftKeyRequired = false;
+		}
+		else
+		{
+			this.mySettings.shiftKeyRequired = true;
+		}
+	}
 
 
 
@@ -152,8 +164,24 @@ module.exports = class FakeDeafen {
 
         triggerKeySetting.appendChild(triggerKeySettingLabel);
         triggerKeySetting.appendChild(triggerKeySettingButton);
+		
+		
+		// Create the shift key setting stuff
+        const shiftKeySetting = document.createElement("div");
+        shiftKeySetting.classList.add("setting");
 
-        mySettingsPanel.append(triggerKeySetting);
+        const shiftKeyLabel = document.createElement("span")
+        shiftKeyLabel.textContent = "Use shift instead of ctrl";
+
+        const shiftKeyInput = document.createElement("input");
+        shiftKeyInput.type = "checkbox";
+        shiftKeyInput.name = "shiftKey";
+		
+		
+
+        shiftKeySetting.append(shiftKeyLabel, shiftKeyInput);
+		
+        mySettingsPanel.append(triggerKeySetting, shiftKeySetting);
 
         return mySettingsPanel;
     }
