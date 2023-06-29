@@ -7,7 +7,6 @@
  * @donate https://paypal.me/ArielChloeMann
  */
  
-// todo add a switch setting between ctrl+key and shift+key
 // todo make a ui button to trigger it
 // todo make it possible to turn off without restarting Discord
 
@@ -77,20 +76,6 @@ module.exports = class FakeDeafen {
 			window.addEventListener("keydown", handleKeyDown);
 		});
 	}
-	
-	switchShiftKey()
-	{
-		if (this.mySettings.shiftKeyRequired)
-		{
-			this.mySettings.shiftKeyRequired = false;
-		}
-		else
-		{
-			this.mySettings.shiftKeyRequired = true;
-		}
-	}
-
-
 
     start() 
 	{
@@ -129,10 +114,20 @@ module.exports = class FakeDeafen {
 		// What's used to trigger the main code
         document.addEventListener("keydown", (event) => 
 		{
-            if (event.ctrlKey && event.key === this.mySettings.triggerKey || event.ctrlKey && event.key === this.mySettings.triggerKey.toUpperCase()) 
+			if (this.mySettings.shiftKeyRequired === false)
 			{
-                this.trigger();
+				if (event.ctrlKey && event.key === this.mySettings.triggerKey || event.ctrlKey && event.key === this.mySettings.triggerKey.toUpperCase()) 
+				{
+					this.trigger();
+				}
             }
+			else
+			{
+				if (event.shiftKey && event.key === this.mySettings.triggerKey || event.shiftKey && event.key === this.mySettings.triggerKey.toUpperCase()) 
+				{
+					this.trigger();
+				}
+			}
         });
     }
 
@@ -176,8 +171,12 @@ module.exports = class FakeDeafen {
         const shiftKeyInput = document.createElement("input");
         shiftKeyInput.type = "checkbox";
         shiftKeyInput.name = "shiftKey";
+		shiftKeyInput.checked = this.mySettings.shiftKeyRequired;
 		
-		
+		shiftKeyInput.addEventListener("change", () => {
+			this.mySettings.shiftKeyRequired = shiftKeyInput.checked;
+			BdApi.Data.save(this.meta.name, "settings", this.mySettings);
+		})
 
         shiftKeySetting.append(shiftKeyLabel, shiftKeyInput);
 		
