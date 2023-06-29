@@ -7,7 +7,6 @@
  * @donate https://paypal.me/ArielChloeMann
  */
  
-// todo make it impossible for user to pick alt, shift, capslock, etc as the trigger key
 // todo add a switch setting between ctrl+key and shift+key
 // todo make a ui button to trigger it
 // todo make it possible to turn off without restarting Discord
