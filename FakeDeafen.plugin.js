@@ -19,7 +19,7 @@ module.exports = class FakeDeafen {
     constructor(meta) 
 	{
         this.meta = meta;
-        this.mySettings = { triggerKey: "d" };
+        this.mySettings = {shiftKeyRequired: false, triggerKey: "d" };
     }
 
 	// Main code
