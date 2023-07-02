@@ -7,7 +7,7 @@
  * @donate https://paypal.me/ArielChloeMann
  */
  
-// todo make a ui button to trigger it
+// todo make the UI button an image and not ugly text
 // todo make it possible to turn off without restarting Discord
 
 module.exports = class FakeDeafen {
@@ -18,7 +18,24 @@ module.exports = class FakeDeafen {
     constructor(meta) 
 	{
         this.meta = meta;
-        this.mySettings = {shiftKeyRequired: false, triggerKey: "d" };
+		this.mySettings = { shiftKeyRequired: false, triggerKey: "d" };
+
+		this.myButton = document.createElement("button");
+		this.myButton.textContent = "Fake Deafen";
+		this.myButton.addEventListener("click", () => { this.trigger(); });
+
+		this.myButton.style.width = "20px";
+		this.myButton.style.height = "40px";
+		this.myButton.style.fontSize = "8px";
+
+		const muteButton = document.querySelector('[aria-label="Mute"]');
+		if (muteButton) {
+			const buttonContainer = document.createElement("div");
+			buttonContainer.classList.add("button-container");
+			buttonContainer.appendChild(this.myButton);
+
+			muteButton.parentNode.insertBefore(buttonContainer, muteButton.nextSibling);
+		}
     }
 
 	// Main code
@@ -133,7 +150,7 @@ module.exports = class FakeDeafen {
 
     stop() 
 	{
-		// This is sad
+		this.myButton.remove();
 	}
 
 	// Create the settings panel
